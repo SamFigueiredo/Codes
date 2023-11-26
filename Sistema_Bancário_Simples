@@ -1,0 +1,109 @@
+# O código a seguir simula um sistema bancário com as operações: sacar,
+# depositar e visualizar extrato.
+
+# =-=-=-=-=-=-=-=-=-=-=-=-=-=-=- REGRAS =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+#### DEPÓSITO
+ #   (1) São aceitos apenas valores positivos;
+ #   (2) Simula apenas 1 usuário;
+ #   (3) Depósitos são armazenados em uma variável única.
+
+#### SAQUE
+ #   (1) Limite de 3 saques diários;
+ #   (2) Limite máximo de R$ 500,00 por saque;
+ #   (3) Caso não haja saldo em conta, o sistema exibe uma mensagem;
+ #   (4) Saques são armazenados em uma variável única.
+
+#### EXTRATO
+ #   (1) Lista todos os depósitos e saques realizados na conta;
+ #   (2) Em cada listagem exibe-se o saldo atual da conta;
+ #   (3) Se o extrato estiver em branco, o sistema exibe uma mensagem;
+ #   (4) Os valores são exibidos no formato R$ xxx.xx;
+
+# =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=
+from colorama import Back, Fore, Style
+
+print(f'''{Back.CYAN}{Fore.BLACK}                   SISTEMA DE MOVIMENTAÇÃO BANCÁRIA                   {Style.RESET_ALL}''')
+print('''  MENU  '''.center(70,"_"),'\n')
+print('''[1] DEPOSITAR
+[2] SACAR 
+[3] EXTRATO 
+[0] SAIR\n''')
+
+opcao = int(input('ESCOLHA UM OPÇÃO: '))
+valor_Deposito = 0
+valor_Saque = 0
+saldo = 0
+limite_saque = 3
+extrato = ''
+cor_mensagem = Back.YELLOW
+cor_texto = Fore.BLACK
+
+while opcao != 0:
+    if opcao == 10:                                                         #MENU
+        print('''  MENU  '''.center(70, "_"), '\n')
+        print('''[1] DEPOSITAR
+[2] SACAR 
+[3] EXTRATO 
+[0] SAIR\n''')
+        opcao = int(input('ESCOLHA UM OPÇÃO: '))
+    elif opcao == 1:                                                        #DEPÓSITO
+        print(f'SALDO: R$ {saldo:.2f}'.rjust(70))
+        valor_Deposito = float(input('VALOR PARA DEPOSITAR (R$): '))
+        if valor_Deposito <= 0:
+            print(f'{cor_mensagem}{cor_texto}VALOR INVÁLIDO. O VALOR DO DEPÓSITO NÃO PODE SER NEGATIVO{Style.RESET_ALL}')
+            opcao = 10
+        else:
+            saldo = saldo + valor_Deposito
+            extrato += f'DEPÓSITO   R$ {valor_Deposito:.2f}\n'
+            print(f'SALDO: R$ {saldo:.2f}')
+            print('''\n[1] DEPOSITAR
+[2] SACAR 
+[3] EXTRATO 
+[0] SAIR\n''')
+            opcao = int(input('ESCOLHA UM OPÇÃO: '))
+    elif opcao == 2:                                                        #SAQUE
+        if saldo <= 0:
+            print(f'{cor_mensagem}{cor_texto}NÃO HÁ SALDO SUFICIENTE PARA EFETUAR A OPERAÇÃO{Style.RESET_ALL}')
+            print(f'SALDO: R$ {saldo:.2f}'.rjust(70))
+            opcao = 10
+        else:
+            print(f'SALDO: R$ {saldo:.2f}'.rjust(70))
+            if limite_saque == 0:
+                print(f'{cor_mensagem}{cor_texto}OPERAÇÃO NÃO PERMITIDA. LIMITE DE SAQUES ALCANÇADO{Style.RESET_ALL}')
+                opcao = 10
+            elif limite_saque != 0:
+                print(f'LIMITE DE SAQUES RESTANTES: {limite_saque}')
+                valor_Saque = float(input('VALOR PARA SACAR (R$): '))
+                if valor_Saque <= 0:
+                    print(f'{cor_mensagem}{cor_texto}VALOR INVÁLIDO. O VALOR DO SAQUE NÃO PODE SER NEGATIVO{Style.RESET_ALL}')
+                    opcao = 10
+                elif valor_Saque > saldo:
+                   print(f'{cor_mensagem}{cor_texto}NÃO SERÁ POSSÍVEL SACAR O DINHEIRO POR FALTA DE SALDO SUFICIENTE{Style.RESET_ALL}')
+                   opcao = 10
+                else:
+                    if valor_Saque > 500:
+                        print(F'{cor_mensagem}{cor_texto}OPERAÇÃO NÃO PERMITIDA. O VALOR DEVE SER INFERIOR A R$ 500,00{Style.RESET_ALL}')
+                        opcao = 10
+                    else:
+                        saldo = saldo - valor_Saque
+                        limite_saque -= 1
+                        extrato += f'SAQUE      R$ {valor_Saque:.2f}\n'
+                        print(f'SALDO: R$ {saldo:.2f}'.rjust(70))
+                        opcao = 10
+    elif opcao == 3:                                                        #EXTRATO
+        if valor_Deposito == 0:
+            print('  EXTRATO  '.center(70,'_'))
+            print(f'{cor_mensagem}{cor_texto}NÃO HOUVE MOVIMENTAÇÃO{Style.RESET_ALL}',end="")
+            print(f'SALDO: R$ {saldo:.2f}'.rjust(48))
+            opcao = 10
+        else:
+            print('  EXTRATO  '.center(70,'_'))
+            print(f'{extrato}')
+            print(f'SALDO: R$ {saldo:.2f}'.rjust(70))
+            opcao = 10
+    else:
+        print(f'{cor_mensagem}{cor_texto}OPÇÃO INVÁLIDA. SELECIONE UMA OPÇÃO CONFORME O MENU{Style.RESET_ALL}')
+        opcao = 10
+else:                                                                       #SAIR
+    print('  TENHA UM BOM DIA  '.center(70,"_"))
+    print(f'''{Back.CYAN}{Fore.BLACK}                   SISTEMA DE MOVIMENTAÇÃO BANCÁRIA                   {Style.RESET_ALL}''')
